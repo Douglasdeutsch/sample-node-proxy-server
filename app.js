@@ -31,7 +31,7 @@ app.get('/api/search/:q?', (req, res) => {
 		})
 		.then(text => {
 console.log(text);
-var titleArr = [...html.matchAll(/"title":{"runs":\[{"text":"(.*)"}]/gm)];
+var titleArr = [...text.matchAll(/"title":{"runs":\[{"text":"(.*)"}]/gm)];
 for (let i = 0; i < titleArr.length; i++) {
 	console.log(titleArr[i][1]);
 res.send("hello");
@@ -46,9 +46,7 @@ res.send("hello");
 				console.error("ERROR", err);
 				res.send(err);
 			})
-		})
-	})
-});
+		});
 
 
 
