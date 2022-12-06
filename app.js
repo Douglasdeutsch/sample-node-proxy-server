@@ -21,6 +21,7 @@ app.get('/api', (req, res) => {
 
 
 // add route to create a proxy server
+const titleArr = [];
 app.get('/api/search/:q?', (req, res) => {
 	console.log("req.params.q =", req.params.q);
 
@@ -31,22 +32,18 @@ app.get('/api/search/:q?', (req, res) => {
 		})
 		.then(text => {
 console.log(text);
+})
+.then(value => {
 var titleArr = [...text.matchAll(/"title":{"runs":\[{"text":"(.*)"}]/gm)];
 for (let i = 0; i < titleArr.length; i++) {
 	console.log(titleArr[i][1]);
-res.send("hello");
-		})
+res.send(titleArr);
+		}
+	})
+});
 		//try1 to return an array of titles from a youtube url
 
-			.then(response=>{
-				res.send(titleArr);
-				console.log(titleArr)
-			})
-			..catch(err => {
-				console.error("ERROR", err);
-				res.send(err);
-			})
-		});
+
 
 
 
