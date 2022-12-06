@@ -31,33 +31,20 @@ app.get('/api/search/:q?', (req, res) => {
 		})
 		.then(text => {
 console.log(text);
+var titleArr = [...html.matchAll(/"title":{"runs":\[{"text":"(.*)"}]/gm)];
+for (let i = 0; i < titleArr.length; i++) {
+	console.log(titleArr[i][1]);
 res.send("hello");
 		})
-		.catch(err => {
-			console.error("ERROR", err);
-			res.send(err);
-		})
-
-
-
-
-	.then(value =>{
 		//try1 to return an array of titles from a youtube url
-		app.get('/api/search/:q?', (req,res)=> {
-			//code for obtaining video titles
-			var filename = "https://www.youtube.com/results?search_query="+ req.params.q
-			var fs = require('fs');
-			fs.readFile(filename, 'utf8', function(err, html) {
-				if (err) console.error(err);
-				var titleArr = [...html.matchAll(/"title":{"runs":\[{"text":"(.*)"}]/gm)];
-				for (let i = 0; i < titleArr.length; i++) {
-					console.log(titleArr[i][1]);
-			 }
-			 console.log(titleArr.length);
-			})
+
 			.then(response=>{
 				res.send(titleArr);
 				console.log(titleArr)
+			})
+			..catch(err => {
+				console.error("ERROR", err);
+				res.send(err);
 			})
 		})
 	})
