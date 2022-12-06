@@ -7,6 +7,7 @@ const express = require('express');
 const nodeFetch = require('node-fetch');
 const path = require('path');
 const app = express();
+let fs = require("fs");
 
 // set a whole project directory as public
 app.use(express.static('./public'));
@@ -22,6 +23,7 @@ app.get('/api', (req, res) => {
 
 // add route to create a proxy server
 const titleArr = [];
+
 app.get('/api/search/:q?', (req, res) => {
 	console.log("req.params.q =", req.params.q);
 
@@ -32,9 +34,14 @@ app.get('/api/search/:q?', (req, res) => {
 		})
 		.then(text => {
 console.log(text);
+var filename = "scraped-pages/https://www.youtube.com/results?search_query="+ req.params.q+ ".html";
+fs.writeFile(filename, text, function (err) {
+			if (err) throw err;
+			console.log('3. File saved');
+		});
 })
 .then(value => {
-var titleArr = [...text.matchAll(/"title":{"runs":\[{"text":"(.*)"}]/gm)];
+var titleArr = [...html.matchAll(/"title":{"runs":\[{"text":"(.*)"}]/gm)];
 for (let i = 0; i < titleArr.length; i++) {
 	console.log(titleArr[i][1]);
 res.send(titleArr);
