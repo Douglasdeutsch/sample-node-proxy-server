@@ -12,60 +12,62 @@ const app = express();
 app.use(express.static('./public'));
 
 // test route
-app.get('/hello', (req, res) => {
+app.get('/api', (req, res) => {
 	res.send("Hello world!");
 });
 
 
-// the endpoints that are allowed
-// example: https://localhost:3000/proxy/test
-const endpoints = {
-	test: {
-		url: 'https://owenmundy.com',
-		type: 'text'
-	},
-	catfact: {
-		url: 'https://cat-fact.herokuapp.com/facts/random',
-		type: 'json'
-	},
-	satellites: {
-		url: 'https://api.n2yo.com/rest/v1/satellite/above/41.702/-76.014/0/90/ANY/&apiKey=XFR4Y5-ULWYWF-H64T3J-4OKO',
-		type: 'json'
-	}
-};
+
 
 
 // add route to create a proxy server
-app.get('/proxy/:key?', (req, res) => {
-	console.log("req.params.key =", req.params.key);
-	if (!req.params || req.params == {} || !req.params.key || !endpoints[req.params.key]) return res.send("🙃");
+app.get('/api/search/:q?', (req, res) => {
+	console.log("req.params.q =", req.params.q);
 
-	nodeFetch(endpoints[req.params.key].url)
-		.then(apiResponse => {
+	nodeFetch("https://www.youtube.com/results?search_query="+req.params.q)
+		.then(response => {
 			// console.log("apiResponse =", apiResponse);
-			return apiResponse.text();
+			return response.text();
 		})
 		.then(text => {
-			// console.log("text =", text);
-			if (endpoints[req.params.key].type === "json") {
-				// convert the API response string to JSON
-				let json = JSON.parse(text);
-				// console.log(json);
-				// return JSON to endpoint
-				res.json(json);
-			} else if (endpoints[req.params.key].type === "text") {
-				res.send(text);
-			} else {
-				res.send("no results");
-			}
+console.log(text);
+res.send("hello");
 		})
 		.catch(err => {
 			console.error("ERROR", err);
-			res.json({
-				"ERROR": err
-			});
-		});
+			res.send(err);
+		})
+
+
+
+
+	.then(value =>{
+		//try1 to return an array of titles from a youtube url
+		app.get('/api/search/:q?', (req,res)=> {
+			//code for obtaining video titles
+			var filename = "https://www.youtube.com/results?search_query="+ req.params.q
+			var fs = require('fs');
+			fs.readFile(filename, 'utf8', function(err, html) {
+				if (err) console.error(err);
+				var titleArr = [...html.matchAll(/"title":{"runs":\[{"text":"(.*)"}]/gm)];
+				for (let i = 0; i < titleArr.length; i++) {
+					console.log(titleArr[i][1]);
+			 }
+			 console.log(titleArr.length);
+			})
+			.then(response=>{
+				res.send(titleArr);
+				console.log(titleArr)
+			})
+		})
+	})
 });
+
+
+
+
+
+
 
 
 // export app
