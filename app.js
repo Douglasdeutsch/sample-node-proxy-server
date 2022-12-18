@@ -29,24 +29,20 @@ app.get('/api/search/:q?', (req, res) => {
 
 	nodeFetch("https://www.youtube.com/results?search_query="+req.params.q)
 		.then(response => {
-			// console.log("apiResponse =", apiResponse);
+			console.log("Response =", response);
 			return response.text();
 		})
-		.then(text => {
-console.log(text);
-var filename = "scraped-pages/https://www.youtube.com/results?search_query="+ req.params.q+ ".html";
-fs.writeFile(filename, text, function (err) {
-			if (err) throw err;
-			console.log('3. File saved');
-		});
-})
-.then(value => {
-var titleArr = [...html.matchAll(/"title":{"runs":\[{"text":"(.*)"}]/gm)];
-for (let i = 0; i < titleArr.length; i++) {
-	console.log(titleArr[i][1]);
-res.send(titleArr);
-		}
-	})
+		.then(html => {
+			// console.log("html test", html);
+			console.log("html recieved, attempting parse");
+			var titleArr = [...html.matchAll(/"title":{"runs":\[{"text":"(.*)"}]/gm)];
+			console.log("titleArr", titleArr);
+			for (let i = 0; i < titleArr.length; i++) {
+				console.log(titleArr[i][1]);
+			}
+			console.log("done parsing");
+			res.send(titleArr);
+		})
 });
 		//try1 to return an array of titles from a youtube url
 
